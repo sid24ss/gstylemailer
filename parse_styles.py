@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import cPickle as pickle
 
 
 class GStyleGuide(object):
@@ -54,9 +55,14 @@ class GStyleGuideParser(object):
 
 		# append the last one
 		self.styles.append(styleguide)
+		# clean up
+		self.styles = [s for s in self.styles if s.body]
 
 	def get_style_list(self):
 		return self.styles
+
+	def save_as_pickle(self):
+		pickle.dump(self.styles, open('data/parsed_styles.p', 'w'))
 
 
 		# print soup.prettify()
@@ -64,3 +70,4 @@ class GStyleGuideParser(object):
 parser = GStyleGuideParser('style-page.html')
 parser.parse_file()
 styles = parser.get_style_list()
+parser.save_as_pickle()
