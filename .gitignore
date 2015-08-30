@@ -58,3 +58,6 @@ target/
 
 # virtualenv
 venv/
+
+# Project specific
+data/mail_cache.p
