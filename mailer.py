@@ -17,10 +17,12 @@ server = smtplib.SMTP('localhost', 1025)
 def mail_item(mail_id, item, item_num):
 	# render the item with styles
 	# Create a text/plain message
-	msg = MIMEText(item.body)
+	msg_body = item.body
+	msg_body += '\n<link rel="stylesheet" type="text/css" href="https://google-styleguide.googlecode.com/svn/trunk/styleguide.css">'
+	msg = MIMEText(msg_body, 'html')
 	me = 'gstyleguidemailer@siddharthswaminathan.in'
 	# you == the recipient's email address
-	msg['Subject'] = '[GStyleGuideMailer] Snipped #%d' % (item_num+1)
+	msg['Subject'] = '[GStyleGuideMailer] Snippet #%d' % (item_num+1)
 	msg['From'] = me
 	msg['To'] = mail_id
 	server.sendmail(me, [mail_id], msg.as_string())
@@ -36,7 +38,7 @@ parsed_styles = None
 if os.path.isfile(STYLES_FILENAME):
 	parsed_styles = pickle.load(open(STYLES_FILENAME,'rb'))
 else:
-	parser = GStyleGuideParser('style-page.html')
+	parser = GStyleGuideParser('resources/style-page.html')
 	parser.parse_file()
 	parsed_styles = parser.get_style_list()
 	# save for future use.
@@ -61,7 +63,7 @@ if os.path.exists(MAIL_CACHE):
 master_set = set(range(NUM_STYLES))
 
 for (mail_id, mailed_items) in mail_cache.iteritems():
-	print mail_id, mailed_items
+	# print mail_id, mailed_items
 	allowed_set = master_set - set(mailed_items)
 	selected_item = random.sample(allowed_set, 1)[0]
 	mail_item(mail_id, parsed_styles[selected_item], len(mailed_items))
@@ -69,7 +71,6 @@ for (mail_id, mailed_items) in mail_cache.iteritems():
 
 # save mail_cache
 pickle.dump(mail_cache, open(MAIL_CACHE, 'w'))
-
 
 server.quit()
 
