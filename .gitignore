@@ -61,3 +61,4 @@ venv/
 
 # Project specific
 data/mail_cache.p
+settings.py

@@ -1,0 +1,5 @@
+SMTP_SERVER = 'localhost'
+SMTP_PORT = 25
+
+MAILER_FROM = 'gstyleguide-mailer@localhost'
+MAILING_LIST = 'mailing_list.txt'
