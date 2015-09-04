@@ -16,7 +16,7 @@ from email.mime.text import MIMEText
 # Send the message via our own SMTP server.
 server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
 
-def mail_item(mail_id, item, item_num):
+def mail_item(mail_id, item, snipped_num):
 	# render the item with styles
 	# Create a text/plain message
 	msg_body = item.body
@@ -24,7 +24,7 @@ def mail_item(mail_id, item, item_num):
 	msg = MIMEText(msg_body, 'html')
 	me = MAILER_FROM
 	# you == the recipient's email address
-	msg['Subject'] = '[GStyleGuideMailer] Snippet #%d' % (item_num+1)
+	msg['Subject'] = '[GStyleGuideMailer] Snippet #%d' % (snipped_num)
 	msg['From'] = me
 	msg['To'] = mail_id
 	try:
@@ -72,8 +72,16 @@ master_set = set(range(NUM_STYLES))
 for (mail_id, mailed_items) in mail_cache.iteritems():
 	# print mail_id, mailed_items
 	allowed_set = master_set - set(mailed_items)
+	# if we have already mailed every item, skip
+	if not allowed_set:
+		continue
 	selected_item = random.sample(allowed_set, 1)[0]
-	success = mail_item(mail_id, parsed_styles[selected_item], len(mailed_items))
+	while selected_item == NUM_STYLES - 1 and len(allowed_set) > 1:
+		selected_item = random.sample(allowed_set, 1)[0]
+	if not mailed_items:
+		# first mail
+		selected_item = 0
+	success = mail_item(mail_id, parsed_styles[selected_item], len(mailed_items)+1)
 	if success:
 		mail_cache[mail_id].append(selected_item)
 
