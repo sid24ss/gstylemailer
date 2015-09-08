@@ -52,9 +52,15 @@ NUM_STYLES = len(parsed_styles)
 
 # load list of emails to send mails to
 mailing_list = None
-with open(MAILING_LIST, 'rb') as mlistfile:
-	mailing_list = mlistfile.readlines()
-	mailing_list = [m.strip() for m in mailing_list]
+# if a command line argument was passed, send an email to only that ID (assume there was just one ID)
+# This can be used to send the initial email to the person that just signed up
+if len(sys.argv) > 1:
+	mail_id = sys.argv[1]
+	mailing_list = [mail_id]
+else:
+	with open(MAILING_LIST, 'rb') as mlistfile:
+		mailing_list = mlistfile.readlines()
+		mailing_list = [m.strip() for m in mailing_list]
 
 # create a dict {mail_id : [items_mailed]}
 mail_cache = {m:[] for m in mailing_list}
