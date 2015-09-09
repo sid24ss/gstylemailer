@@ -65,13 +65,14 @@ else:
 # create a dict {mail_id : [items_mailed]}
 mail_cache = {m:[] for m in mailing_list}
 
+mail_cache_saved = dict()
 # Update from cache
 if os.path.exists(MAIL_CACHE):
 	mail_cache_saved = pickle.load(open(MAIL_CACHE, 'rb'))
-	# filter out items that are no longer in the mailing_list
-	mail_cache_saved = {k:v for (k,v) in mail_cache_saved.iteritems() if k in mail_cache}
+	# get items from the saved cache that are relevant to the current mailing list
+	mail_cache_current = {k:v for (k,v) in mail_cache_saved.iteritems() if k in mail_cache}
 	# update our current list with the cache
-	mail_cache.update(mail_cache_saved)
+	mail_cache.update(mail_cache_current)
 
 # print mail_cache
 master_set = set(range(NUM_STYLES))
@@ -91,8 +92,10 @@ for (mail_id, mailed_items) in mail_cache.iteritems():
 	if success:
 		mail_cache[mail_id].append(selected_item)
 
+# update the cache
+mail_cache_saved.update(mail_cache)
 # save mail_cache
-pickle.dump(mail_cache, open(MAIL_CACHE, 'w'))
+pickle.dump(mail_cache_saved, open(MAIL_CACHE, 'w'))
 
 server.quit()
 
