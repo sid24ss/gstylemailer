@@ -21,6 +21,12 @@ def mail_item(mail_id, item, snipped_num):
 	# Create a text/plain message
 	msg_body = item.body
 	msg_body += '\n<link rel="stylesheet" type="text/css" href="https://google-styleguide.googlecode.com/svn/trunk/styleguide.css">'
+	msg_body += '<style>\n'
+	css = None
+	with open('resources/styleguide.css', 'rb') as f:
+		css = f.read()
+	msg_body += css
+	msg_body += '</style>'
 	msg = MIMEText(msg_body, 'html')
 	me = MAILER_FROM
 	# you == the recipient's email address
